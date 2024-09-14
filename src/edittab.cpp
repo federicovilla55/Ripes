@@ -59,6 +59,24 @@ EditTab::EditTab(QToolBar *toolbar, QWidget *parent)
 
   m_ui->codeEditor->document()->setPlainText(
       RipesSettings::value(RIPES_SETTING_SOURCECODE).toString());
+  
+  switch (RipesSettings::value(RIPES_SETTING_INPUT_TYPE).toInt()) {
+    case SourceType::Assembly: {
+      m_ui->setAssemblyInput->toggle();
+      break;
+    }
+    case SourceType::C: {
+      if (CCManager::get().hasValidCC()){
+        m_ui->setCInput->toggle();
+        m_buildAction->setEnabled(true);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+
 
   connect(
       RipesSettings::getObserver(RIPES_SETTING_EDITORREGS),
@@ -124,18 +142,6 @@ EditTab::EditTab(QToolBar *toolbar, QWidget *parent)
   m_ui->editorSplitter->setStretchFactor(0, 2);
   m_ui->editorSplitter->setStretchFactor(1, 2);
 
-  switch (RipesSettings::value(RIPES_SETTING_INPUT_TYPE).toInt()) {
-  case SourceType::Assembly: {
-    m_ui->setAssemblyInput->toggle();
-    break;
-  }
-  case SourceType::C: {
-    m_ui->setCInput->toggle();
-    break;
-  }
-  default:
-    break;
-  }
 }
 
 void EditTab::showSymbolNavigator() {
